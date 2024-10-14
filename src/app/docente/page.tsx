@@ -4,6 +4,9 @@ import axios from "axios";
 import { getServerSession } from "next-auth/next";
 import { useEffect, useState } from "react";
 import { authOptions } from "../api/auth/[...nextauth]/route";
+import { MdLogout } from "react-icons/md";
+import { signOut } from "next-auth/react";
+import useServerSession from "@/hooks/useServerSession";
 
 interface Preguntas {
   titulo: string;
@@ -15,8 +18,7 @@ interface Preguntas {
 export default function DocentePage() {
   const [preguntas, setPreguntas] = useState<Preguntas[]>([
     { titulo: "", respuestas: ["", "", ""], respuesta_correcta: 0, editable: true },
-  ]);
-
+  ]);  
 
   // Agregar nueva pregunta
   const aggPregunta = () =>
@@ -91,9 +93,13 @@ export default function DocentePage() {
   };
 
   return (
-    <div className="py-16 px-60 flex flex-col gap-16">
+    <div className="relative py-16 px-60 flex flex-col gap-16">
       <div className="font-semibold text-3xl">
         <h1>Crea un Quizz</h1>
+      </div>
+
+      <div className="absolute top-0 right-0 p-5">
+        <button onClick={async () => await signOut({ callbackUrl: "/" })} className="flex flex-row justify-center items-center gap-2 px-6 py-2 bg-red-400 rounded-md text-white hover">Cerrar Sesion <MdLogout /> </button>
       </div>
 
       <div className="flex flex-col gap-10 min-h-96 px-16">

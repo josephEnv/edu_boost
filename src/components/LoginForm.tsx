@@ -6,9 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { InputField } from "./InputField";
 import { LoginFormValues, loginSchema } from "@/schemas/login";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { user_return } from "@/types";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"
+import useServerSession from "@/hooks/useServerSession";
 
 
 // Formulario de Login
@@ -17,8 +17,11 @@ export const LoginForm = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const router = useRouter();
+  const router = useRouter()
+  
   const [globalError, setGlobalError] = useState<string | null>(null); // Para manejar errores globales
+
+
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
@@ -38,7 +41,7 @@ export const LoginForm = () => {
           setGlobalError("Error al iniciar sesión. Por favor, inténtalo de nuevo.");
         }
       } else {
-        router.refresh()
+        router.push("/docente")
       }
     } catch (e) {
       setGlobalError("Error inesperado al iniciar sesión.");
