@@ -3,46 +3,81 @@
 import axios from "axios";
 import { useState } from "react";
 import { MdLogout } from "react-icons/md";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { user_return } from "@/types";
 
-interface Preguntas {
+export interface Pregunta {
   titulo: string;
-  respuestas: string[];
+  respuestas: Respuesta[];
   respuesta_correcta: number;
   editable: boolean;
 }
 
+export interface Respuesta {
+  texto: string;
+}
+
 export default function DocentePage() {
-  const [preguntas, setPreguntas] = useState<Preguntas[]>([
-    { titulo: "", respuestas: ["", "", ""], respuesta_correcta: 0, editable: true },
+
+  const session = useSession().data?.user as {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  } & user_return
+
+  const [preguntas, setPreguntas] = useState<Pregunta[]>([
+    {
+      titulo: "",
+      respuestas: [{ texto: "" }, { texto: "" }, { texto: "" }],
+      respuesta_correcta: 0,
+      editable: true,
+    },
   ]);
+  const [tituloQuizz, setTituloQuizz] = useState<string>("");
 
   // Agregar nueva pregunta
   const aggPregunta = () =>
     setPreguntas([
       ...preguntas.map((p) => ({ ...p, editable: false })), // Hacer que las preguntas anteriores no sean editables
-      { titulo: "", respuestas: ["", "", ""], respuesta_correcta: 0, editable: true },
+      {
+        titulo: "",
+        respuestas: [{ texto: "" }, { texto: "" }, { texto: "" }],
+        respuesta_correcta: 0,
+        editable: true,
+      },
     ]);
 
-  // Eliminar pregunta
-  const eliminarPregunta = (index: number) =>
-    setPreguntas(preguntas.filter((_, i) => i !== index));
-
-  // Actualizar una pregunta
+  // Actualizar una pregunta específica
   const actualizarPregunta = (
     index: number,
-    campo: keyof Preguntas,
-    valor: string | number | string[]
+    campo: keyof Pregunta,
+    valor: string | number
   ) => {
     const nuevasPreguntas = [...preguntas];
     nuevasPreguntas[index] = { ...nuevasPreguntas[index], [campo]: valor };
     setPreguntas(nuevasPreguntas);
   };
 
-  // Agregar una nueva respuesta
-  const aggRespuesta = (index: number) => {
+  // Agregar una nueva respuesta a una pregunta
+  const aggRespuesta = (preguntaIndex: number) => {
     const nuevasPreguntas = [...preguntas];
-    nuevasPreguntas[index].respuestas.push("");
+    nuevasPreguntas[preguntaIndex].respuestas.push({ texto: "" });
+    setPreguntas(nuevasPreguntas);
+  };
+
+  // Eliminar una pregunta
+  const eliminarPregunta = (preguntaIndex: number) => {
+    setPreguntas(preguntas.filter((_, index) => index !== preguntaIndex));
+  };
+
+  // Actualizar una respuesta específica
+  const actualizarRespuesta = (
+    preguntaIndex: number,
+    respuestaIndex: number,
+    valor: string
+  ) => {
+    const nuevasPreguntas = [...preguntas];
+    nuevasPreguntas[preguntaIndex].respuestas[respuestaIndex].texto = valor;
     setPreguntas(nuevasPreguntas);
   };
 
@@ -55,17 +90,6 @@ export default function DocentePage() {
     setPreguntas(nuevasPreguntas);
   };
 
-  // Actualizar una respuesta específica
-  const actualizarRespuesta = (
-    preguntaIndex: number,
-    respuestaIndex: number,
-    valor: string
-  ) => {
-    const nuevasPreguntas = [...preguntas];
-    nuevasPreguntas[preguntaIndex].respuestas[respuestaIndex] = valor;
-    setPreguntas(nuevasPreguntas);
-  };
-
   // Hacer una pregunta editable
   const editarPregunta = (index: number) => {
     const nuevasPreguntas = [...preguntas];
@@ -73,38 +97,66 @@ export default function DocentePage() {
     setPreguntas(nuevasPreguntas);
   };
 
-  // Lógica para agregar pregunta, eliminar, actualizar, etc.
-
+  // Guardar Quizz
   const guardarQuizz = async () => {
     const preguntasValidadas = preguntas.every((pregunta) => {
       return (
         pregunta.titulo.trim() !== "" &&
-        pregunta.respuestas.every((respuesta) => respuesta.trim() !== "")
+        pregunta.respuestas.every((respuesta) => respuesta.texto.trim() !== "")
       );
     });
 
-    if (!preguntasValidadas) {
-      await axios.post("/api/quizz");
-      return;
-    }
+    if (preguntasValidadas && tituloQuizz.trim() !== "") {
+      try {
+        const response = await axios.post("/api/quizz", {
+          titulo: tituloQuizz,
+          id_docente: session.id_usuario,
+          preguntas,
+        });
 
-    // Enviar quiz válido
-    console.log("Quizz guardado correctamente.");
+        alert(`El codigo de la reunion es: ${response.data.llave}`)
+
+        // Limpiar el estado después de guardar exitosamente
+        setTituloQuizz(""); // Reiniciar el título del quiz
+        setPreguntas([
+          {
+            titulo: "",
+            respuestas: [{ texto: "" }, { texto: "" }, { texto: "" }],
+            respuesta_correcta: 0,
+            editable: true,
+          },
+        ]);
+
+        // Puedes agregar aquí un mensaje de éxito o redirigir
+        console.log("Quizz guardado exitosamente");
+      } catch (e) {
+        console.error(e);
+      }
+    }
   };
 
   return (
-    <div className="relative py-16 px-60 flex flex-col gap-16">
+    <div className="relative py-16 px-60 flex flex-col gap-16 bg-white text-neutral-800">
+
+      <div className="absolute top-0 right-0 p-5">
+        <button onClick={async () => await signOut({ callbackUrl: "/" })} className="px-5 py-2 bg-red-400 text-white flex flex-row items-center gap-2 rounded-xl">
+          <span>Cerrar sesion</span>
+          <MdLogout />
+        </button>
+      </div>
+
       <div className="font-semibold text-3xl">
         <h1>Crea un Quizz</h1>
       </div>
 
-      <div className="absolute top-0 right-0 p-5">
-        <button
-          onClick={async () => await signOut({ callbackUrl: "/" })}
-          className="flex flex-row justify-center items-center gap-2 px-6 py-2 bg-red-400 rounded-md text-white hover"
-        >
-          Cerrar Sesion <MdLogout />
-        </button>
+      <div>
+        <label>Título del Quizz</label>
+        <input
+          className="w-full outline-neutral-400 rounded-lg p-2"
+          value={tituloQuizz}
+          onChange={(e) => setTituloQuizz(e.target.value)}
+          placeholder="Ingresa el título del Quizz"
+        />
       </div>
 
       <div className="flex flex-col gap-10 min-h-96 px-16">
@@ -118,13 +170,17 @@ export default function DocentePage() {
                     className="w-[45rem] outline-neutral-400 rounded-lg p-2"
                     placeholder="Ingresa la pregunta..."
                     value={item.titulo}
-                    onChange={(e) => actualizarPregunta(index, "titulo", e.target.value)}
+                    onChange={(e) =>
+                      actualizarPregunta(index, "titulo", e.target.value)
+                    }
                   />
                 </div>
               ) : (
                 <div className="flex flex-col gap-2 mb-4">
-                  <span className="font-bold">Pregunta {index + 1}: {item.titulo}</span>
-                  <span>Respuesta correcta: {item.respuestas[item.respuesta_correcta]}</span>
+                  <span className="font-bold">
+                    Pregunta {index + 1}: {item.titulo}
+                  </span>
+                  <span>Respuesta correcta: {item.respuestas[item.respuesta_correcta].texto}</span>
                   <span>Cantidad de respuestas: {item.respuestas.length}</span>
                 </div>
               )}
@@ -137,14 +193,18 @@ export default function DocentePage() {
                         type="radio"
                         name={`pregunta-${index}`}
                         checked={item.respuesta_correcta === rIndex}
-                        onChange={() => actualizarPregunta(index, "respuesta_correcta", rIndex)}
+                        onChange={() =>
+                          actualizarPregunta(index, "respuesta_correcta", rIndex)
+                        }
                       />
                       <input
                         type="text"
                         className="w-full outline-neutral-400 rounded-lg p-2"
                         placeholder={`Respuesta ${rIndex + 1}`}
-                        value={respuesta}
-                        onChange={(e) => actualizarRespuesta(index, rIndex, e.target.value)}
+                        value={respuesta.texto}
+                        onChange={(e) =>
+                          actualizarRespuesta(index, rIndex, e.target.value)
+                        }
                       />
                       {item.respuestas.length > 3 && (
                         <button
@@ -158,7 +218,32 @@ export default function DocentePage() {
                   ))}
                 </div>
               )}
-              {/* Otros botones y lógica */}
+
+              {item.editable && (
+                <div className="flex gap-4 mt-2">
+                  <button
+                    onClick={() => aggRespuesta(index)}
+                    className="text-blue-500 font-semibold"
+                  >
+                    Agregar respuesta
+                  </button>
+                  <button
+                    onClick={() => eliminarPregunta(index)}
+                    className="text-red-500 font-semibold"
+                  >
+                    Eliminar pregunta
+                  </button>
+                </div>
+              )}
+
+              {!item.editable && (
+                <button
+                  onClick={() => editarPregunta(index)}
+                  className="text-blue-500 font-semibold mt-2"
+                >
+                  Editar pregunta
+                </button>
+              )}
             </div>
           ))
         ) : (
@@ -166,10 +251,16 @@ export default function DocentePage() {
         )}
       </div>
 
-      <div className="flex justify-center">
+      <div className="px-60 flex flex-col gap-2">
+        <button
+          onClick={aggPregunta}
+          className="w-full p-2 rounded-md text-white font-semibold bg-blue-500"
+        >
+          Agregar pregunta
+        </button>
         <button
           onClick={guardarQuizz}
-          className="px-6 py-2 bg-blue-500 rounded-md text-white"
+          className="w-full p-2 rounded-md text-white font-semibold bg-green-500"
         >
           Guardar Quizz
         </button>
@@ -177,5 +268,3 @@ export default function DocentePage() {
     </div>
   );
 }
-
-

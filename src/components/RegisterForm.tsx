@@ -2,7 +2,7 @@
 import Link from "next/link"; 
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InputField } from "./InputField";
+import { InputField } from "./InputForm";
 import axios from "axios";
 import { RegisterFormValues, registerSchema } from "@/schemas/register";
 import { useRouter } from "next/navigation";

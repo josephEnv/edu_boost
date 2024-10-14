@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -23,22 +17,37 @@ enum QuizzState {
   INACTIVO
 }
 
-model usuario {
-  id_usuario String @id @unique @default(uuid())
-  nombre_usuario String @unique
-  clave String
-  rol Rol
-  fecha_registro DateTime @default(now())
-  quizz quizz?
+model Usuario {  // Cambiar el nombre para mantener convenciones de capitalización
+  id_usuario      String    @id @unique @default(uuid())
+  nombre_usuario  String    @unique
+  clave           String
+  rol             Rol
+  fecha_registro  DateTime  @default(now())
+  quizz           Quizz[]   // Un docente puede tener varios quizzes
 }
 
-model quizz {
-  id_quizz String @id @unique @default(uuid())
-  llave String @unique
-  docente usuario @relation(fields: [id_docente], references: [id_usuario])
-  id_docente String @unique
-  titulo String
-  preguntas String[]
-  respuesta Int
-  estado QuizzState @default(ACTIVO)
+model Quizz {
+  id_quizz        String    @id @unique @default(uuid())
+  llave           String    @unique
+  docente         Usuario   @relation(fields: [id_docente], references: [id_usuario])
+  id_docente      String
+  titulo          String
+  preguntas       Pregunta[]  // Relación con el modelo Pregunta
+  estado          QuizzState  @default(ACTIVO)
+}
+
+model Pregunta {
+  id_pregunta     String     @id @unique @default(uuid())
+  quizz           Quizz      @relation(fields: [id_quizz], references: [id_quizz])
+  id_quizz        String
+  titulo          String
+  respuestas      Respuesta[]  // Relación con el modelo Respuesta
+  respuesta_correcta Int       // Índice de la respuesta correcta
+}
+
+model Respuesta {
+  id_respuesta    String     @id @unique @default(uuid())
+  pregunta        Pregunta   @relation(fields: [id_pregunta], references: [id_pregunta])
+  id_pregunta     String
+  texto           String     // Texto de la respuesta
 }
