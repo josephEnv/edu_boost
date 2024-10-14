@@ -1,4 +1,3 @@
-"use client";
 
 import Link from "next/link";
 import { useForm, FormProvider } from "react-hook-form";
@@ -6,9 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { InputField } from "./InputField";
 import { LoginFormValues, loginSchema } from "@/schemas/login";
 import { signIn } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation"
-import useServerSession from "@/hooks/useServerSession";
 
 
 // Formulario de Login

@@ -1,4 +1,3 @@
-"use client";
 
 import Link from "next/link"; 
 import { useForm, FormProvider } from "react-hook-form";
@@ -7,8 +6,6 @@ import { InputField } from "./InputField";
 import axios from "axios";
 import { RegisterFormValues, registerSchema } from "@/schemas/register";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion"; // Importamos framer-motion
-import { generateShapes } from "@/libs/generateShapes";
 
 export const RegisterForm = () => {
   const methods = useForm<RegisterFormValues>({
