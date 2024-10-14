@@ -1,7 +1,8 @@
 "use client"
 
-import useServerSession from "@/hooks/useServerSession";
+import { user_return } from "@/types";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 import localFont from "next/font/local";
 import Link from "next/link";
 
@@ -13,7 +14,12 @@ const crang_font = localFont({
 
 export default function Home() {
 
-  const session = useServerSession()
+  const session = useSession().data?.user as {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  } & user_return
+
 
   return (
       <div className="relative overflow-hidden h-screen flex justify-center items-center bg-gray-100">
