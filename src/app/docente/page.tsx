@@ -1,12 +1,9 @@
 "use client";
 
 import axios from "axios";
-import { getServerSession } from "next-auth/next";
-import { useEffect, useState } from "react";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { useState } from "react";
 import { MdLogout } from "react-icons/md";
 import { signOut } from "next-auth/react";
-import useServerSession from "@/hooks/useServerSession";
 
 interface Preguntas {
   titulo: string;

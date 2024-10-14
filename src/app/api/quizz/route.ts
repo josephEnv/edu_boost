@@ -1,5 +1,5 @@
 import { generarNumeroAleatorio } from "@/libs/functions";
-import { PrismaClient, quizz, usuario } from "@prisma/client";
+import { PrismaClient, quizz } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();

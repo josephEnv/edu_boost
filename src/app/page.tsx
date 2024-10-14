@@ -4,7 +4,6 @@ import useServerSession from "@/hooks/useServerSession";
 import { motion } from "framer-motion";
 import localFont from "next/font/local";
 import Link from "next/link";
-import { useEffect } from "react";
 
 const crang_font = localFont({
   src: "./fonts/crang.ttf",
