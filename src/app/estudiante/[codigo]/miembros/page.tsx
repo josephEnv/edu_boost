@@ -39,7 +39,6 @@ export default function MiembrosPage({
         id_usuario: session.id_usuario,
         miembros: miembros.filter((member) => member.trim() !== ""), // Solo enviar nombres no vacíos
       });
-      console.log(res);
       // Redirigir a la página del quizz
       router.push(`/quizz/${params.codigo}`);
     } catch (error) {
