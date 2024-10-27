@@ -7,7 +7,12 @@ type InputFieldProps = {
   placeholder?: string;
 };
 
-export const InputField = ({ label, name, type = "text", placeholder }: InputFieldProps) => {
+export const InputField = ({
+  label,
+  name,
+  type = "text",
+  placeholder,
+}: InputFieldProps) => {
   const {
     register,
     formState: { errors },
@@ -28,7 +33,9 @@ export const InputField = ({ label, name, type = "text", placeholder }: InputFie
         } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
       />
       {errors[name] && (
-        <p className="text-red-500 text-sm mt-1">{errors[name]?.message as string}</p>
+        <p className="text-red-500 text-sm mt-1">
+          {errors[name]?.message as string}
+        </p>
       )}
     </div>
   );

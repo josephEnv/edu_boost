@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
 type InputProps = {
   id: string;
   label?: string;
-  size?: 'small' | 'default' | 'large';
-  state?: 'default' | 'success' | 'error';
+  size?: "small" | "default" | "large";
+  state?: "default" | "success" | "error";
   placeholder?: string;
   helperText?: string;
   value?: string;
@@ -12,22 +12,34 @@ type InputProps = {
 };
 
 const sizeClasses: Record<string, string> = {
-  small: 'p-2 text-xs',
-  default: 'p-2.5 text-sm',
-  large: 'p-4 text-base',
+  small: "p-2 text-xs",
+  default: "p-2.5 text-sm",
+  large: "p-4 text-base",
 };
 
 const stateClasses: Record<string, string> = {
-  default: 'border-gray-300 focus:ring-blue-500 focus:border-blue-500',
-  success: 'border-green-500 focus:ring-green-500 focus:border-green-500',
-  error: 'border-red-500 focus:ring-red-500 focus:border-red-500',
+  default: "border-gray-300 focus:ring-blue-500 focus:border-blue-500",
+  success: "border-green-500 focus:ring-green-500 focus:border-green-500",
+  error: "border-red-500 focus:ring-red-500 focus:border-red-500",
 };
 
-const Input: React.FC<InputProps> = ({ id, label, size = 'default', placeholder, state = 'default', helperText, value, onChange }) => {
+const Input: React.FC<InputProps> = ({
+  id,
+  label,
+  size = "default",
+  placeholder,
+  state = "default",
+  helperText,
+  value,
+  onChange,
+}) => {
   return (
     <div className="mb-6">
       {label && (
-        <label htmlFor={id} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        <label
+          htmlFor={id}
+          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >
           {label}
         </label>
       )}
@@ -42,7 +54,11 @@ const Input: React.FC<InputProps> = ({ id, label, size = 'default', placeholder,
       {helperText && (
         <p
           className={`mt-1 text-sm ${
-            state === 'error' ? 'text-red-500' : state === 'success' ? 'text-green-500' : 'text-gray-500'
+            state === "error"
+              ? "text-red-500"
+              : state === "success"
+                ? "text-green-500"
+                : "text-gray-500"
           }`}
         >
           {helperText}

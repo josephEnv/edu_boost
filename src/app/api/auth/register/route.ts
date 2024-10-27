@@ -10,7 +10,10 @@ export const POST = async (req: NextRequest) => {
     const result = registerSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json({ error: "Datos inválidos", issues: result.error.format() }, { status: 400 });
+      return NextResponse.json(
+        { error: "Datos inválidos", issues: result.error.format() },
+        { status: 400 },
+      );
     }
 
     const validatedData = result.data as RegisterFormValues;
@@ -21,7 +24,10 @@ export const POST = async (req: NextRequest) => {
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: "El nombre de usuario ya está en uso" }, { status: 409 });
+      return NextResponse.json(
+        { error: "El nombre de usuario ya está en uso" },
+        { status: 409 },
+      );
     }
 
     const newUser = await prisma.usuario.create({
@@ -32,9 +38,15 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-    return NextResponse.json({ user: newUser, message: "Usuario creado con éxito" }, { status: 200 });
+    return NextResponse.json(
+      { user: newUser, message: "Usuario creado con éxito" },
+      { status: 200 },
+    );
   } catch (error) {
-    console.log(error)
-    return NextResponse.json({ error: "Error interno del servidor", details: error }, { status: 500 });
+    console.log(error);
+    return NextResponse.json(
+      { error: "Error interno del servidor", details: error },
+      { status: 500 },
+    );
   }
 };

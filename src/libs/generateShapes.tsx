@@ -5,8 +5,14 @@ export const generateShapes = (count: number) => {
   return Array.from({ length: count }).map((_, i) => {
     const size = Math.floor(Math.random() * 200) + 100; // Tamaño entre 20px y 100px
     const colorIndex = Math.floor(Math.random() * 5); // Índice para el color
-    const colors = ["bg-blue-300", "bg-yellow-300", "bg-red-300", "bg-green-300", "bg-purple-300"];
-    
+    const colors = [
+      "bg-blue-300",
+      "bg-yellow-300",
+      "bg-red-300",
+      "bg-green-300",
+      "bg-purple-300",
+    ];
+
     // Calcular posiciones aleatorias en X e Y
     const xEnd = Math.random() * 1000; // Desplazamiento X aleatorio
     const yEnd = Math.random() * 700; // Desplazamiento Y aleatorio

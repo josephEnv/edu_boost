@@ -1,3 +1,5 @@
+// middleware.ts
+import axios from "axios";
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
@@ -10,21 +12,61 @@ export default withAuth(
 
     // Redirigir si el usuario ya está autenticado e intenta acceder a rutas de autenticación
     if (pathname.startsWith("/auth") && token) {
-      return NextResponse.redirect(new URL("/", req.url)); // O redirige a /docente si corresponde
+      return NextResponse.redirect(new URL("/", req.url));
     }
 
     // Proteger las rutas /docente y /estudiante
-    if (pathname.startsWith("/docente") && (!token || token.rol !== "DOCENTE")) {
-      return NextResponse.redirect(new URL("/auth/login", req.url)); // Redirigir a login si no es DOCENTE o no autenticado
+    if (
+      pathname.startsWith("/docente") &&
+      (!token || token.rol !== "DOCENTE")
+    ) {
+      return NextResponse.redirect(new URL("/auth/login", req.url));
     }
 
-    if (pathname.startsWith("/estudiante") && (!token || token.rol !== "ESTUDIANTE")) {
-      return NextResponse.redirect(new URL("/auth/login", req.url)); // Redirigir a login si no es ESTUDIANTE o no autenticado
+    if (
+      pathname.startsWith("/estudiante") &&
+      (!token || token.rol !== "ESTUDIANTE")
+    ) {
+      return NextResponse.redirect(new URL("/auth/login", req.url));
+    }
+
+    // Verificar si el usuario tiene estadísticas para el quiz
+    if (pathname.startsWith("/quizz/")) {
+      const codigo = pathname.split("/").pop(); // Suponiendo que el código del quiz está en la URL
+      const res = await axios.post(
+        new URL("/api/estadisticas/check", req.url).toString(),
+        { id_usuario: (token as any).id_usuario, codigo },
+      );
+
+      if (res.data.hasStatistics === false) {
+        return NextResponse.redirect(
+          new URL(`/estudiante/${codigo}/miembros`, req.url),
+        ); // Redirigir a la página para agregar nombres
+      }
+
+      // Verificar el estado de las estadísticas
+      if (res.data.state === "RESUELTO") {
+        return NextResponse.redirect(
+          new URL(`/estudiante/${codigo}/resultado`, req.url),
+        ); // O redirigir a una página de resultados si corresponde
+      }
+    }
+
+    // Lógica para la página de miembros
+    if (pathname.startsWith("/estudiante/") && pathname.endsWith("/miembros")) {
+      const codigo = pathname.split("/").pop(); // Suponiendo que el código del quiz está en la URL
+      const res = await axios.post(
+        new URL("/api/estadisticas/check", req.url).toString(),
+        { id_usuario: (token as any).id_usuario, codigo },
+      );
+
+      if (res.data.hasStatistics === true) {
+        return NextResponse.redirect(new URL(`/quizz/${codigo}`, req.url)); // Redirigir al quiz si ya hay estadísticas
+      }
     }
   },
   {
     callbacks: {
-      // El callback authorized define cuándo se permite el acceso
       authorized: ({ token, req }) => {
         const {
           nextUrl: { pathname },
@@ -39,14 +81,16 @@ export default withAuth(
         return !!token;
       },
     },
-  }
+  },
 );
 
 export const config = {
   matcher: [
-    "/docente/:path*",  // Protege todas las rutas bajo /docente
-    "/estudiante/:path*",  // Protege todas las rutas bajo /estudiante
-    "/auth/login",  // Aplica el middleware en /auth/login
-    "/auth/register",  // Aplica el middleware en /auth/register
+    "/docente/:path*",
+    "/estudiante/:path*",
+    "/auth/login",
+    "/auth/register",
+    "/quizz/:path*", // Aplica el middleware a las rutas de quiz
+    "/estudiante/:path*/miembros", // Aplica el middleware a la página de miembros
   ],
 };

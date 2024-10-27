@@ -1,5 +1,5 @@
-"use client"
-import Link from "next/link"; 
+"use client";
+import Link from "next/link";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputField } from "./InputForm";
@@ -30,14 +30,17 @@ export const RegisterForm = () => {
 
       {/* Formulario */}
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6 w-[20rem] z-10">
+        <form
+          onSubmit={methods.handleSubmit(onSubmit)}
+          className="space-y-6 w-[20rem] z-10"
+        >
           <h1 className="text-2xl font-bold mb-6">Crea una cuenta</h1>
 
-          <InputField 
-            label="Nombre de usuario" 
-            name="username" 
-            type="text" 
-            placeholder="Ingresa tu nombre de usuario" 
+          <InputField
+            label="Nombre de usuario"
+            name="username"
+            type="text"
+            placeholder="Ingresa tu nombre de usuario"
           />
 
           <div className="mb-4">
@@ -48,7 +51,9 @@ export const RegisterForm = () => {
               id="accountType"
               {...methods.register("accountType")}
               className={`mt-1 block w-full px-3 py-2 border ${
-                methods.formState.errors.accountType ? "border-red-500" : "border-gray-300"
+                methods.formState.errors.accountType
+                  ? "border-red-500"
+                  : "border-gray-300"
               } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
             >
               <option value="">Selecciona una opción</option>
@@ -56,15 +61,17 @@ export const RegisterForm = () => {
               <option value="DOCENTE">Docente</option>
             </select>
             {methods.formState.errors.accountType && (
-              <p className="text-red-500 text-sm mt-1">{methods.formState.errors.accountType?.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {methods.formState.errors.accountType?.message}
+              </p>
             )}
           </div>
 
-          <InputField 
-            label="Contraseña" 
-            name="password" 
-            type="password" 
-            placeholder="Contraseña" 
+          <InputField
+            label="Contraseña"
+            name="password"
+            type="password"
+            placeholder="Contraseña"
           />
 
           <InputField

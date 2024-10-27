@@ -17,28 +17,35 @@ enum QuizzState {
   INACTIVO
 }
 
-model Usuario {  // Cambiar el nombre para mantener convenciones de capitalización
-  id_usuario      String    @id @unique @default(uuid())
-  nombre_usuario  String    @unique
+enum UserQuizzState {
+  RESUELTO
+  NO_RESUELTO
+}
+
+model Usuario {
+  id_usuario      String       @id @unique @default(uuid())
+  nombre_usuario  String       @unique
   clave           String
   rol             Rol
-  fecha_registro  DateTime  @default(now())
-  quizz           Quizz[]   // Un docente puede tener varios quizzes
+  fecha_registro  DateTime     @default(now())
+  quizz           Quizz[]      // Un docente puede tener varios quizzes
+  estadisticas    Estadisticas[] // Relación con la tabla Estadisticas
 }
 
 model Quizz {
-  id_quizz        String    @id @unique @default(uuid())
-  llave           String    @unique
-  docente         Usuario   @relation(fields: [id_docente], references: [id_usuario])
+  id_quizz        String       @id @unique @default(uuid())
+  llave           String       @unique
+  docente         Usuario      @relation(fields: [id_docente], references: [id_usuario])
   id_docente      String
   titulo          String
-  preguntas       Pregunta[]  // Relación con el modelo Pregunta
-  estado          QuizzState  @default(ACTIVO)
+  preguntas       Pregunta[]   // Relación con el modelo Pregunta
+  estado          QuizzState   @default(ACTIVO)
+  estadisticas    Estadisticas[] // Relación con la tabla Estadisticas
 }
 
 model Pregunta {
-  id_pregunta     String     @id @unique @default(uuid())
-  quizz           Quizz      @relation(fields: [id_quizz], references: [id_quizz])
+  id_pregunta     String       @id @unique @default(uuid())
+  quizz           Quizz        @relation(fields: [id_quizz], references: [id_quizz])
   id_quizz        String
   titulo          String
   respuestas      Respuesta[]  // Relación con el modelo Respuesta
@@ -46,8 +53,24 @@ model Pregunta {
 }
 
 model Respuesta {
-  id_respuesta    String     @id @unique @default(uuid())
-  pregunta        Pregunta   @relation(fields: [id_pregunta], references: [id_pregunta])
+  id_respuesta    String       @id @unique @default(uuid())
+  pregunta        Pregunta     @relation(fields: [id_pregunta], references: [id_pregunta])
   id_pregunta     String
-  texto           String     // Texto de la respuesta
+  texto           String       // Texto de la respuesta
 }
+
+model Estadisticas {
+  id_estadistica  String       @id @unique @default(uuid())
+  id_usuario      String
+  codigo          String
+  puntaje         Float?       // Puntuación obtenida en el quizz
+  fecha           DateTime     @default(now())
+  quizz_state     UserQuizzState @default(NO_RESUELTO)
+  miembros        String[]     @default([])
+
+  usuario         Usuario      @relation(fields: [id_usuario], references: [id_usuario])
+  quizz           Quizz        @relation(fields: [codigo], references: [llave])
+
+  @@unique([codigo]) // Esto hace que la combinación de id_usuario y id_quizz sea únic
+}
+

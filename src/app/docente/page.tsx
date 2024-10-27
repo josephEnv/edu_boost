@@ -18,12 +18,11 @@ export interface Respuesta {
 }
 
 export default function DocentePage() {
-
   const session = useSession().data?.user as {
     name?: string | null;
     email?: string | null;
     image?: string | null;
-  } & user_return
+  } & user_return;
 
   const [preguntas, setPreguntas] = useState<Pregunta[]>([
     {
@@ -51,7 +50,7 @@ export default function DocentePage() {
   const actualizarPregunta = (
     index: number,
     campo: keyof Pregunta,
-    valor: string | number
+    valor: string | number,
   ) => {
     const nuevasPreguntas = [...preguntas];
     nuevasPreguntas[index] = { ...nuevasPreguntas[index], [campo]: valor };
@@ -74,7 +73,7 @@ export default function DocentePage() {
   const actualizarRespuesta = (
     preguntaIndex: number,
     respuestaIndex: number,
-    valor: string
+    valor: string,
   ) => {
     const nuevasPreguntas = [...preguntas];
     nuevasPreguntas[preguntaIndex].respuestas[respuestaIndex].texto = valor;
@@ -114,7 +113,7 @@ export default function DocentePage() {
           preguntas,
         });
 
-        alert(`El codigo de la reunion es: ${response.data.llave}`)
+        alert(`El codigo de la reunion es: ${response.data.llave}`);
 
         // Limpiar el estado después de guardar exitosamente
         setTituloQuizz(""); // Reiniciar el título del quiz
@@ -137,9 +136,11 @@ export default function DocentePage() {
 
   return (
     <div className="relative py-16 px-60 flex flex-col gap-16 bg-white text-neutral-800">
-
       <div className="absolute top-0 right-0 p-5">
-        <button onClick={async () => await signOut({ callbackUrl: "/" })} className="px-5 py-2 bg-red-400 text-white flex flex-row items-center gap-2 rounded-xl">
+        <button
+          onClick={async () => await signOut({ callbackUrl: "/" })}
+          className="px-5 py-2 bg-red-400 text-white flex flex-row items-center gap-2 rounded-xl"
+        >
           <span>Cerrar sesion</span>
           <MdLogout />
         </button>
@@ -180,7 +181,10 @@ export default function DocentePage() {
                   <span className="font-bold">
                     Pregunta {index + 1}: {item.titulo}
                   </span>
-                  <span>Respuesta correcta: {item.respuestas[item.respuesta_correcta].texto}</span>
+                  <span>
+                    Respuesta correcta:{" "}
+                    {item.respuestas[item.respuesta_correcta].texto}
+                  </span>
                   <span>Cantidad de respuestas: {item.respuestas.length}</span>
                 </div>
               )}
@@ -194,7 +198,11 @@ export default function DocentePage() {
                         name={`pregunta-${index}`}
                         checked={item.respuesta_correcta === rIndex}
                         onChange={() =>
-                          actualizarPregunta(index, "respuesta_correcta", rIndex)
+                          actualizarPregunta(
+                            index,
+                            "respuesta_correcta",
+                            rIndex,
+                          )
                         }
                       />
                       <input

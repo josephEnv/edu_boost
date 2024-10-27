@@ -6,7 +6,11 @@ import { generarNumeroAleatorio } from "@/libs/functions";
 const prisma = new PrismaClient();
 
 export const POST = async (request: NextRequest) => {
-  const body = await request.json() as { titulo: string, id_docente: string, preguntas: Pregunta[] };
+  const body = (await request.json()) as {
+    titulo: string;
+    id_docente: string;
+    preguntas: Pregunta[];
+  };
 
   try {
     // Crear el quizz
@@ -39,6 +43,9 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(newQuizz, { status: 201 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Error creating quizz" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error creating quizz" },
+      { status: 500 },
+    );
   }
 };

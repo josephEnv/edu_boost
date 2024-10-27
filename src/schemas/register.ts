@@ -2,7 +2,9 @@ import { z } from "zod";
 
 export const registerSchema = z
   .object({
-    username: z.string().min(5, "El nombre de usuario debe tener al menos 5 caracteres"),
+    username: z
+      .string()
+      .min(5, "El nombre de usuario debe tener al menos 5 caracteres"),
     accountType: z.enum(["ESTUDIANTE", "DOCENTE"], {
       errorMap: () => ({ message: "Selecciona un tipo de cuenta válido" }),
     }),
