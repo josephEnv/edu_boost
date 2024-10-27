@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/components/Button";
 import { user_return } from "@/types";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -96,7 +97,7 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
   const currentQuestion = quizz.preguntas[currentQuestionIndex];
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-white text-neutral-800">
       <h1 className="text-4xl font-bold">{quizz.titulo}</h1>
       <div className="mt-4">
         <h2 className="text-2xl font-semibold">{currentQuestion.titulo}</h2>
@@ -121,26 +122,18 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
           ))}
         </ul>
       </div>
-      <div className="mt-4">
-        <button
-          onClick={handlePreviousQuestion}
-          className="p-2 bg-gray-400 text-white rounded mr-2"
-          disabled={currentQuestionIndex === 0}
-        >
-          Anterior
-        </button>
-        <button
+      <div className="mt-4 flex flex-row gap-3">
+        <Button onClick={currentQuestionIndex !== 0 ? handlePreviousQuestion : undefined} label="Anterior" color="gray" />
+        <Button 
           onClick={
-            currentQuestionIndex === quizz.preguntas.length - 1
-              ? handleSubmit
-              : handleNextQuestion
+            currentQuestion === quizz.preguntas.length - 1
+            ? handleSubmit
+            : handleNextQuestion
           }
-          className="p-2 bg-blue-500 text-white rounded"
-        >
-          {currentQuestionIndex === quizz.preguntas.length - 1
-            ? "Enviar"
-            : "Siguiente"}
-        </button>
+          label={ currentQuestionIndex === quizz.preguntas.length - 1 ? "Enviar" : "Siguiente" }
+          color="blue"
+        />
+        
       </div>
     </div>
   );

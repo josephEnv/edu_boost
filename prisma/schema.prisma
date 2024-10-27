@@ -71,6 +71,5 @@ model Estadisticas {
   usuario         Usuario      @relation(fields: [id_usuario], references: [id_usuario])
   quizz           Quizz        @relation(fields: [codigo], references: [llave])
 
-  @@unique([codigo]) // Esto hace que la combinación de id_usuario y id_quizz sea únic
 }
 

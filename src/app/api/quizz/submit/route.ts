@@ -35,22 +35,35 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Guardar o actualizar estadísticas en la base de datos
-    await prisma.estadisticas.upsert({
+    // Verificar si ya existen estadísticas para el usuario y el quiz
+    const estadisticasExistente = await prisma.estadisticas.findFirst({
       where: {
         id_usuario,
-        codigo: codigo,
-      },
-      update: {
-        puntaje: puntaje,
-        quizz_state: "RESUELTO",
-      },
-      create: {
-        id_usuario,
-        codigo: codigo,
-        puntaje: puntaje,
+        codigo,
       },
     });
+
+    if (estadisticasExistente) {
+      // Si existe, actualizar
+      await prisma.estadisticas.update({
+        where: {
+          id_estadistica: estadisticasExistente.id_estadistica, // Usar el ID existente para actualizar
+        },
+        data: {
+          puntaje,
+          quizz_state: "RESUELTO",
+        },
+      });
+    } else {
+      // Si no existe, crear una nueva estadística
+      await prisma.estadisticas.create({
+        data: {
+          id_usuario,
+          codigo,
+          puntaje,
+        },
+      });
+    }
 
     return NextResponse.json({
       message: "Respuestas enviadas con éxito",

@@ -21,9 +21,6 @@ export default function EstudiantePage() {
           <span>Cerrar sesion</span>
           <MdLogout />
         </button>
-        <button onClick={async () => await axios.get("/api/estadisticas")}>
-          Hello perra
-        </button>
       </div>
       <div className="w-[30rem] px-5 py-4 min-h-[10rem] flex flex-col gap-2 justify-center items-center shadow-md rounded-xl shadow-neutral-400">
         <h1 className="font-black text-5xl mb-2">CODIGO</h1>
