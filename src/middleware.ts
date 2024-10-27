@@ -15,7 +15,7 @@ export default withAuth(
       return NextResponse.redirect(new URL("/", req.url));
     }
 
-    // Proteger las rutas /docente y /estudiante
+    // Proteger las rutas /docente y /estudiante según el rol del usuario
     if (
       pathname.startsWith("/docente") &&
       (!token || token.rol !== "DOCENTE")
@@ -30,34 +30,51 @@ export default withAuth(
       return NextResponse.redirect(new URL("/auth/login", req.url));
     }
 
-    // Verificar si el usuario tiene estadísticas para el quiz
+    // Verificación de la existencia del código en las rutas de quiz y miembros
+    if (pathname.startsWith("/quizz/") || pathname.endsWith("/miembros")) {
+      const codigo = pathname.split("/").pop();
+
+      // Verificar si el quiz existe llamando a /api/quizz/verify
+      const verifyRes = await axios.post(
+        new URL("/api/quizz/verify", req.url).toString(),
+        { llave: codigo }
+      );
+
+      if (!verifyRes.data) {
+        return NextResponse.redirect(new URL("/404", req.url)); // Redirige a una página 404 si el quiz no existe
+      }
+    }
+
+    // Verificar si el usuario tiene estadísticas para el quiz en las rutas de quiz
     if (pathname.startsWith("/quizz/")) {
-      const codigo = pathname.split("/").pop(); // Suponiendo que el código del quiz está en la URL
+      const codigo = pathname.split("/").pop();
+
       const res = await axios.post(
         new URL("/api/estadisticas/check", req.url).toString(),
-        { id_usuario: (token as any).id_usuario, codigo },
+        { id_usuario: (token as any).id_usuario, codigo }
       );
 
       if (res.data.hasStatistics === false) {
         return NextResponse.redirect(
-          new URL(`/estudiante/${codigo}/miembros`, req.url),
-        ); // Redirigir a la página para agregar nombres
+          new URL(`/estudiante/${codigo}/miembros`, req.url)
+        ); // Redirigir a la página para agregar nombres si no tiene estadísticas
       }
 
-      // Verificar el estado de las estadísticas
+      // Redirigir a resultados si el estado es "RESUELTO"
       if (res.data.state === "RESUELTO") {
         return NextResponse.redirect(
-          new URL(`/estudiante/${codigo}/resultado`, req.url),
-        ); // O redirigir a una página de resultados si corresponde
+          new URL(`/estudiante/${codigo}/resultado`, req.url)
+        );
       }
     }
 
-    // Lógica para la página de miembros
+    // Comprobación en la página de miembros para redirigir al quiz si ya tiene estadísticas
     if (pathname.startsWith("/estudiante/") && pathname.endsWith("/miembros")) {
-      const codigo = pathname.split("/").pop(); // Suponiendo que el código del quiz está en la URL
+      const codigo = pathname.split("/").pop();
+
       const res = await axios.post(
         new URL("/api/estadisticas/check", req.url).toString(),
-        { id_usuario: (token as any).id_usuario, codigo },
+        { id_usuario: (token as any).id_usuario, codigo }
       );
 
       if (res.data.hasStatistics === true) {
@@ -81,7 +98,7 @@ export default withAuth(
         return !!token;
       },
     },
-  },
+  }
 );
 
 export const config = {
