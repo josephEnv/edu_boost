@@ -18,9 +18,9 @@ const sizeClasses: Record<string, string> = {
 };
 
 const stateClasses: Record<string, string> = {
-  default: "border-gray-300 focus:ring-blue-500 focus:border-blue-500",
-  success: "border-green-500 focus:ring-green-500 focus:border-green-500",
-  error: "border-red-500 focus:ring-red-500 focus:border-red-500",
+  default: "border-gray-300 transition-all focus:ring-blue-500 focus:border-blue-500",
+  success: "border-green-500 transition-all focus:ring-green-500 focus:border-green-500",
+  error: "border-red-500 transition-all focus:ring-red-500 focus:border-red-500",
 };
 
 const Input: React.FC<InputProps> = ({
@@ -47,7 +47,7 @@ const Input: React.FC<InputProps> = ({
         type="text"
         placeholder={placeholder}
         id={id}
-        className={`block w-full ${sizeClasses[size]} text-gray-900 border rounded-lg bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${stateClasses[state]}`}
+        className={`block w-full ${sizeClasses[size]} text-gray-900 outline-none border rounded-lg bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${stateClasses[state]}`}
         value={value}
         onChange={onChange}
       />

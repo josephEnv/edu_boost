@@ -30,21 +30,6 @@ export default withAuth(
       return NextResponse.redirect(new URL("/auth/login", req.url));
     }
 
-    // Verificación de la existencia del código en las rutas de quiz y miembros
-    if (pathname.startsWith("/quizz/") || pathname.endsWith("/miembros")) {
-      const codigo = pathname.split("/").pop();
-
-      // Verificar si el quiz existe llamando a /api/quizz/verify
-      const verifyRes = await axios.post(
-        new URL("/api/quizz/verify", req.url).toString(),
-        { llave: codigo }
-      );
-
-      if (!verifyRes.data) {
-        return NextResponse.redirect(new URL("/404", req.url)); // Redirige a una página 404 si el quiz no existe
-      }
-    }
-
     // Verificar si el usuario tiene estadísticas para el quiz en las rutas de quiz
     if (pathname.startsWith("/quizz/")) {
       const codigo = pathname.split("/").pop();

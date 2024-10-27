@@ -5,6 +5,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { user_return } from "@/types";
+import Button from "@/components/Button";
+import Input from "@/components/Input";
 
 export default function MiembrosPage({
   params,
@@ -46,33 +48,24 @@ export default function MiembrosPage({
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-white text-neutral-800">
       <h1 className="text-3xl font-bold">Agregar Miembros al Grupo</h1>
-      <div className="mt-4">
+      <div className="mt-4 text-center">
         {miembros.map((miembro, index) => (
           <div key={index} className="mb-2">
-            <input
-              type="text"
+            <Input
+              id="Miembro"
+              size="large"
               value={miembro}
               onChange={(e) => handleChange(index, e.target.value)}
               placeholder={`Miembro ${index + 1}`}
-              className="border rounded p-2"
             />
           </div>
         ))}
-        <button
-          onClick={handleAddMember}
-          className="mt-2 bg-blue-500 text-white p-2 rounded"
-        >
-          Agregar Otro Miembro
-        </button>
+        <Button onClick={handleAddMember} label={"Agregar otro miembro"} color={"blue"} />
+        
       </div>
-      <button
-        onClick={handleSubmit}
-        className="mt-4 bg-green-500 text-white p-2 rounded"
-      >
-        Iniciar Quizz
-      </button>
+      <Button onClick={handleSubmit} label="Iniciar Quizz" color="green" />
     </div>
   );
 }
