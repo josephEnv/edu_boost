@@ -44,12 +44,13 @@ model Quizz {
 }
 
 model Pregunta {
-  id_pregunta     String       @id @unique @default(uuid())
-  quizz           Quizz        @relation(fields: [id_quizz], references: [id_quizz])
-  id_quizz        String
-  titulo          String
-  respuestas      Respuesta[]  // Relación con el modelo Respuesta
-  respuesta_correcta Int       // Índice de la respuesta correcta
+  id_pregunta         String       @id @unique @default(uuid())
+  quizz               Quizz        @relation(fields: [id_quizz], references: [id_quizz])
+  id_quizz            String
+  titulo              String
+  respuestas          Respuesta[]  // Relación con el modelo Respuesta
+  respuesta_correcta  Int          // Índice de la respuesta correcta
+  duracion            Int          @default(0)
 }
 
 model Respuesta {
@@ -70,6 +71,4 @@ model Estadisticas {
 
   usuario         Usuario      @relation(fields: [id_usuario], references: [id_usuario])
   quizz           Quizz        @relation(fields: [codigo], references: [llave])
-
 }
-

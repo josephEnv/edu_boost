@@ -1,4 +1,3 @@
-// middleware.ts
 import axios from "axios";
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
@@ -63,7 +62,26 @@ export default withAuth(
       );
 
       if (res.data.hasStatistics === true) {
-        return NextResponse.redirect(new URL(`/quizz/${codigo}`, req.url)); // Redirigir al quiz si ya hay estadísticas
+        // Redirigir al quiz si ya hay estadísticas
+        return NextResponse.redirect(new URL(`/quizz/${codigo}`, req.url));
+      }
+    }
+
+    // Verificar en la ruta del quizz si el estudiante tiene estadísticas antes de acceder
+    if (pathname.startsWith("/estudiante/") && pathname.endsWith("/miembros")) {
+      const codigo = pathname.split("/").pop();
+
+      const res = await axios.post(
+        new URL("/api/estadisticas/check", req.url).toString(),
+        {
+          id_usuario: (token as any).id_usuario,
+          codigo,
+        }
+      );
+
+      if (res.data.hasStatistics === true) {
+        // Redirigir a la página del quizz si ya tiene estadísticas
+        return NextResponse.redirect(new URL(`/quizz/${codigo}`, req.url));
       }
     }
   },

@@ -21,6 +21,7 @@ export const POST = async (request: NextRequest) => {
         id_docente: body.id_docente, // Necesitas el ID del docente autenticado aquí
         preguntas: {
           create: body.preguntas.map((pregunta) => ({
+            duracion: pregunta.tiempo_limite,
             titulo: pregunta.titulo,
             respuestas: {
               create: pregunta.respuestas.map((respuesta) => ({

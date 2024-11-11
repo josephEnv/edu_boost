@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import localFont from "next/font/local";
 import Link from "next/link";
 
-const crang_font = localFont({
+export const crang_font = localFont({
   src: "./fonts/Crang.ttf",
   variable: "--font-crang",
   weight: "100 900",

@@ -10,6 +10,7 @@ export interface Pregunta {
   titulo: string;
   respuestas: Respuesta[];
   respuesta_correcta: number;
+  tiempo_limite: number; // tiempo límite en segundos
   editable: boolean;
 }
 
@@ -29,6 +30,7 @@ export default function DocentePage() {
       titulo: "",
       respuestas: [{ texto: "" }, { texto: "" }, { texto: "" }],
       respuesta_correcta: 0,
+      tiempo_limite: 0, // Valor inicial del tiempo límite
       editable: true,
     },
   ]);
@@ -42,6 +44,7 @@ export default function DocentePage() {
         titulo: "",
         respuestas: [{ texto: "" }, { texto: "" }, { texto: "" }],
         respuesta_correcta: 0,
+        tiempo_limite: 0,
         editable: true,
       },
     ]);
@@ -122,11 +125,11 @@ export default function DocentePage() {
             titulo: "",
             respuestas: [{ texto: "" }, { texto: "" }, { texto: "" }],
             respuesta_correcta: 0,
+            tiempo_limite: 0,
             editable: true,
           },
         ]);
 
-        // Puedes agregar aquí un mensaje de éxito o redirigir
         console.log("Quizz guardado exitosamente");
       } catch (e) {
         console.error(e);
@@ -175,6 +178,15 @@ export default function DocentePage() {
                       actualizarPregunta(index, "titulo", e.target.value)
                     }
                   />
+                  <input
+                    type="number"
+                    className="w-32 outline-neutral-400 rounded-lg p-2 mt-2"
+                    placeholder="Tiempo límite (s)"
+                    value={item.tiempo_limite}
+                    onChange={(e) =>
+                      actualizarPregunta(index, "tiempo_limite", Number(e.target.value))
+                    }
+                  />
                 </div>
               ) : (
                 <div className="flex flex-col gap-2 mb-4">
@@ -186,6 +198,7 @@ export default function DocentePage() {
                     {item.respuestas[item.respuesta_correcta].texto}
                   </span>
                   <span>Cantidad de respuestas: {item.respuestas.length}</span>
+                  <span>Tiempo límite: {item.tiempo_limite} segundos</span>
                 </div>
               )}
 
@@ -255,20 +268,21 @@ export default function DocentePage() {
             </div>
           ))
         ) : (
-          <h1>No hay preguntas</h1>
+          <h2>No has agregado preguntas</h2>
         )}
-      </div>
 
-      <div className="px-60 flex flex-col gap-2">
         <button
           onClick={aggPregunta}
-          className="w-full p-2 rounded-md text-white font-semibold bg-blue-500"
+          className="mt-4 text-blue-500 font-semibold"
         >
-          Agregar pregunta
+          Agregar Pregunta
         </button>
+      </div>
+
+      <div className="flex justify-center mt-10">
         <button
           onClick={guardarQuizz}
-          className="w-full p-2 rounded-md text-white font-semibold bg-green-500"
+          className="px-6 py-2 bg-green-400 text-white rounded-lg"
         >
           Guardar Quizz
         </button>

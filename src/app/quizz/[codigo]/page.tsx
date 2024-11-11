@@ -6,6 +6,8 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Pregunta } from "@prisma/client";
 
 export default function QuizzPage({ params }: { params: { codigo: string } }) {
   const session = useSession().data?.user as {
@@ -21,9 +23,10 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
   const [responses, setResponses] = useState<{ [key: string]: string }>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<number>(0); // Tiempo restante
+  const [timerActive, setTimerActive] = useState<boolean>(false); // Estado del temporizador
 
   useEffect(() => {
-    console.log(session);
     const fetchQuizz = async () => {
       try {
         const response = await axios.get(`/api/quizz/get/${params.codigo}`);
@@ -35,6 +38,28 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
     fetchQuizz();
   }, [params.codigo]);
 
+  useEffect(() => {
+    // Iniciar el temporizador cuando la pregunta cambia
+    if (quizz && quizz.preguntas.length > 0) {
+      const currentQuestion = quizz.preguntas[currentQuestionIndex] as Pregunta;
+      setTimeRemaining(currentQuestion.duracion); // Establecer el tiempo límite de la pregunta
+      setTimerActive(true);
+
+      const timer = setInterval(() => {
+        setTimeRemaining((prev) => {
+          if (prev <= 0) {
+            clearInterval(timer);
+            handleNextQuestion(); // Avanzar automáticamente cuando el tiempo se agota
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer); // Limpiar el intervalo al cambiar de pregunta
+    }
+  }, [currentQuestionIndex, quizz]);
+
   const handleResponseChange = (preguntaId: string, respuestaId: string) => {
     setResponses((prev) => ({
       ...prev,
@@ -43,9 +68,11 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
   };
 
   const handleNextQuestion = () => {
-    setCurrentQuestionIndex((prev) =>
-      Math.min(prev + 1, quizz.preguntas.length - 1),
-    );
+    if (currentQuestionIndex === quizz.preguntas.length - 1) {
+      handleSubmit(); // Enviar el cuestionario automáticamente si es la última pregunta
+    } else {
+      setCurrentQuestionIndex((prev) => Math.min(prev + 1, quizz.preguntas.length - 1));
+    }
   };
 
   const handlePreviousQuestion = () => {
@@ -95,9 +122,10 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
   }
 
   const currentQuestion = quizz.preguntas[currentQuestionIndex];
+  const progress = currentQuestion.duracion > 0 ? (timeRemaining / currentQuestion.duracion) * 100 : 0;
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-white text-neutral-800">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-white text-neutral-800 relative">
       <h1 className="text-4xl font-bold">{quizz.titulo}</h1>
       <div className="mt-4">
         <h2 className="text-2xl font-semibold">{currentQuestion.titulo}</h2>
@@ -121,19 +149,32 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
             </li>
           ))}
         </ul>
+        
       </div>
+
+      {/* Barra de progreso al fondo */}
+      <div className="absolute bottom-0 w-full bg-gray-200 h-2">
+        <div
+          className="h-full bg-blue-500"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+
       <div className="mt-4 flex flex-row gap-3">
-        <Button onClick={currentQuestionIndex !== 0 ? handlePreviousQuestion : undefined} label="Anterior" color="gray" />
-        <Button 
-          onClick={
-            currentQuestion === quizz.preguntas.length - 1
-            ? handleSubmit
-            : handleNextQuestion
+        <Button
+          onClick={currentQuestionIndex !== 0 ? handlePreviousQuestion : undefined}
+          label="Anterior"
+          color="gray"
+        />
+        <Button
+          onClick={handleNextQuestion}
+          label={
+            currentQuestionIndex === quizz.preguntas.length - 1
+              ? "Enviar"
+              : "Siguiente"
           }
-          label={ currentQuestionIndex === quizz.preguntas.length - 1 ? "Enviar" : "Siguiente" }
           color="blue"
         />
-        
       </div>
     </div>
   );
