@@ -1,11 +1,17 @@
 "use client";
 
-import { crang_font } from "@/app/page";
 import { user_return } from "@/types";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import localFont from "next/font/local";
+
+const crang_font = localFont({
+  src: "./fonts/Crang.ttf",
+  variable: "--font-crang",
+  weight: "100 900",
+});
 
 export default function EstadisticasPage() {
   const session = useSession().data?.user as {
@@ -46,8 +52,12 @@ export default function EstadisticasPage() {
               </div>
 
               <div className="mt-4">
-                <div className="font-medium text-md">Puntaje: {estadistica.puntaje}</div>
-                <div className="text-sm text-gray-500">Estado: {estadistica.quizz_state}</div>
+                <div className="font-medium text-md">
+                  Puntaje: {estadistica.puntaje}
+                </div>
+                <div className="text-sm text-gray-500">
+                  Estado: {estadistica.quizz_state}
+                </div>
               </div>
 
               <div className="mt-4">
@@ -62,7 +72,9 @@ export default function EstadisticasPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center text-xl text-gray-500">No se encontraron estadísticas.</div>
+        <div className="text-center text-xl text-gray-500">
+          No se encontraron estadísticas.
+        </div>
       )}
     </div>
   );

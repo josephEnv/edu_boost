@@ -184,7 +184,11 @@ export default function DocentePage() {
                     placeholder="Tiempo límite (s)"
                     value={item.tiempo_limite}
                     onChange={(e) =>
-                      actualizarPregunta(index, "tiempo_limite", Number(e.target.value))
+                      actualizarPregunta(
+                        index,
+                        "tiempo_limite",
+                        Number(e.target.value),
+                      )
                     }
                   />
                 </div>

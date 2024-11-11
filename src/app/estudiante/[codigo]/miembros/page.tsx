@@ -40,8 +40,8 @@ export default function MiembrosPage({
         miembros: miembros.filter((member) => member.trim() !== ""), // Solo enviar nombres no vacíos
       });
 
-      const val = `/quizz/${params.codigo}`
-      console.log(val)
+      const val = `/quizz/${params.codigo}`;
+      console.log(val);
 
       router.replace(val);
     } catch (error) {
@@ -64,8 +64,11 @@ export default function MiembrosPage({
             />
           </div>
         ))}
-        <Button onClick={handleAddMember} label={"Agregar otro miembro"} color={"blue"} />
-        
+        <Button
+          onClick={handleAddMember}
+          label={"Agregar otro miembro"}
+          color={"blue"}
+        />
       </div>
       <Button onClick={handleSubmit} label="Iniciar Quizz" color="green" />
     </div>

@@ -2,7 +2,7 @@ import React from "react";
 
 type ButtonProps = {
   label: string;
-  radius?: "sm" | "lg" | "xl" | "md" | "none"
+  radius?: "sm" | "lg" | "xl" | "md" | "none";
   color: "blue" | "green" | "red" | "yellow" | "purple" | "gray" | "light"; // Agrega los colores que quieras soportar
   onClick?: () => void;
 };
@@ -12,8 +12,8 @@ const radiusRecord: Record<string, string> = {
   lg: "rounded-lg",
   xl: "rounded-xl",
   md: "rounded-md",
-  none: "rounded-none"
-}
+  none: "rounded-none",
+};
 
 const colorClasses: Record<string, string> = {
   blue: "text-white transition-all bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",

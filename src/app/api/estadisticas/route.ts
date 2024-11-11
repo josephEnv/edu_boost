@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     id_usuario: string;
   };
 
-  console.log(llave)
+  console.log(llave);
 
   try {
     // Verificar si el `llave` existe en la tabla `Quizz`
@@ -16,11 +16,10 @@ export async function POST(request: NextRequest) {
       where: { llave },
     });
 
-
     if (!quizExists) {
       return NextResponse.json(
         { error: "El código de quiz no existe." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -38,7 +37,7 @@ export async function POST(request: NextRequest) {
     console.error("Error al guardar estadísticas:", error);
     return NextResponse.json(
       { error: "Error al guardar estadísticas" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest) => {
     if (!estadistica) {
       return NextResponse.json(
         { hasStatistics: false, state: null },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -32,13 +32,13 @@ export const POST = async (req: NextRequest) => {
         titulo: estadistica.quizz.titulo,
         miembros: estadistica.miembros,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error al verificar estadísticas:", error);
     return NextResponse.json(
       { error: "Error al verificar estadísticas" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

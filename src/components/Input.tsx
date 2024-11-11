@@ -18,9 +18,12 @@ const sizeClasses: Record<string, string> = {
 };
 
 const stateClasses: Record<string, string> = {
-  default: "border-gray-300 transition-all focus:ring-blue-500 focus:border-blue-500",
-  success: "border-green-500 transition-all focus:ring-green-500 focus:border-green-500",
-  error: "border-red-500 transition-all focus:ring-red-500 focus:border-red-500",
+  default:
+    "border-gray-300 transition-all focus:ring-blue-500 focus:border-blue-500",
+  success:
+    "border-green-500 transition-all focus:ring-green-500 focus:border-green-500",
+  error:
+    "border-red-500 transition-all focus:ring-red-500 focus:border-red-500",
 };
 
 const Input: React.FC<InputProps> = ({

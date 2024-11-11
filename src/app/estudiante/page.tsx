@@ -9,7 +9,6 @@ import { useState } from "react";
 import { MdLogout } from "react-icons/md";
 import { FcStatistics } from "react-icons/fc";
 
-
 export default function EstudiantePage() {
   const [codigo, setCodigo] = useState("");
 

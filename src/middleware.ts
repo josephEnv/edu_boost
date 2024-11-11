@@ -35,19 +35,19 @@ export default withAuth(
 
       const res = await axios.post(
         new URL("/api/estadisticas/check", req.url).toString(),
-        { id_usuario: (token as any).id_usuario, codigo }
+        { id_usuario: (token as any).id_usuario, codigo },
       );
 
       if (res.data.hasStatistics === false) {
         return NextResponse.redirect(
-          new URL(`/estudiante/${codigo}/miembros`, req.url)
+          new URL(`/estudiante/${codigo}/miembros`, req.url),
         ); // Redirigir a la página para agregar nombres si no tiene estadísticas
       }
 
       // Redirigir a resultados si el estado es "RESUELTO"
       if (res.data.state === "RESUELTO") {
         return NextResponse.redirect(
-          new URL(`/estudiante/${codigo}/resultado`, req.url)
+          new URL(`/estudiante/${codigo}/resultado`, req.url),
         );
       }
     }
@@ -58,7 +58,7 @@ export default withAuth(
 
       const res = await axios.post(
         new URL("/api/estadisticas/check", req.url).toString(),
-        { id_usuario: (token as any).id_usuario, codigo }
+        { id_usuario: (token as any).id_usuario, codigo },
       );
 
       if (res.data.hasStatistics === true) {
@@ -76,7 +76,7 @@ export default withAuth(
         {
           id_usuario: (token as any).id_usuario,
           codigo,
-        }
+        },
       );
 
       if (res.data.hasStatistics === true) {
@@ -101,7 +101,7 @@ export default withAuth(
         return !!token;
       },
     },
-  }
+  },
 );
 
 export const config = {
