@@ -47,7 +47,7 @@ export default withAuth(
       // Redirigir a resultados si el estado es "RESUELTO"
       if (res.data.state === "RESUELTO") {
         return NextResponse.redirect(
-          new URL(`/estudiante/${codigo}/resultado`, req.url),
+          new URL(`/estudiante/estadisticas`, req.url),
         );
       }
     }
