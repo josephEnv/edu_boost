@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import localFont from "next/font/local";
 
 const crang_font = localFont({
-  src: "./fonts/Crang.ttf",
+  src: "../../fonts/Crang.ttf",
   variable: "--font-crang",
   weight: "100 900",
 });
