@@ -44,12 +44,7 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
       const currentQuestion = quizz.preguntas[currentQuestionIndex] as Pregunta;
       setTimeRemaining(currentQuestion.duracion); // Establecer el tiempo límite de la pregunta
       setTimerActive(true);
-    }
-  }, [currentQuestionIndex, quizz]); // Solo reinicia cuando la pregunta cambie
 
-  useEffect(() => {
-    // Temporizador
-    if (timerActive && timeRemaining > 0) {
       const timer = setInterval(() => {
         setTimeRemaining((prev) => {
           if (prev <= 0) {
@@ -63,7 +58,7 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
 
       return () => clearInterval(timer); // Limpiar el intervalo al cambiar de pregunta
     }
-  }, [timerActive, timeRemaining]);
+  }, [currentQuestionIndex, quizz]);
 
   const handleResponseChange = (preguntaId: string, respuestaId: string) => {
     setResponses((prev) => ({
@@ -76,10 +71,7 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
     if (currentQuestionIndex === quizz.preguntas.length - 1) {
       handleSubmit(); // Enviar el cuestionario automáticamente si es la última pregunta
     } else {
-      setCurrentQuestionIndex((prev) =>
-        Math.min(prev + 1, quizz.preguntas.length - 1),
-      );
-      setTimerActive(false); // Detener el temporizador al cambiar de pregunta
+      setCurrentQuestionIndex((prev) => Math.min(prev + 1, quizz.preguntas.length - 1));
     }
   };
 
@@ -130,10 +122,7 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
   }
 
   const currentQuestion = quizz.preguntas[currentQuestionIndex];
-  const progress =
-    currentQuestion.duracion > 0
-      ? (timeRemaining / currentQuestion.duracion) * 100
-      : 0;
+  const progress = currentQuestion.duracion > 0 ? (timeRemaining / currentQuestion.duracion) * 100 : 0;
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-white text-neutral-800 relative">
@@ -160,6 +149,7 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
             </li>
           ))}
         </ul>
+        
       </div>
 
       {/* Barra de progreso al fondo */}
@@ -172,9 +162,7 @@ export default function QuizzPage({ params }: { params: { codigo: string } }) {
 
       <div className="mt-4 flex flex-row gap-3">
         <Button
-          onClick={
-            currentQuestionIndex !== 0 ? handlePreviousQuestion : undefined
-          }
+          onClick={currentQuestionIndex !== 0 ? handlePreviousQuestion : undefined}
           label="Anterior"
           color="gray"
         />
